@@ -9,7 +9,7 @@ clean:
 	rm -f ./rdrp
 
 install:
-	go install
+	go get -v -u
 
 lint:
 	$(GOPATH)/bin/golint .
