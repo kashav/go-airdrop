@@ -22,16 +22,16 @@ When a client first connects, they're registered as a new instance on the `_rdrp
 
 This program implements mDNS with [grandcat/zeroconf](https://github.com/grandcat/zeroconf).
 
-Read more about mDNS: [RFC 6762](https://tools.ietf.org/html/rfc6762) and DNS-SD: [RFC 6763](https://tools.ietf.org/html/rfc6763). 
+Read more about mDNS: [RFC 6762](https://tools.ietf.org/html/rfc6762) and DNS-SD: [RFC 6763](https://tools.ietf.org/html/rfc6763).
 
 ### Installation / setup
-  
+
   - Go should be [installed](https://golang.org/doc/install) and [configured](https://golang.org/doc/install#testing).
 
   - Install with Go:
 
     ```sh
-    $ go get -v github.com/kshvmdn/rdrp...
+    $ go get -v github.com/kshvmdn/rdrp/...
     $ which rdrp
     $GOPATH/bin/rdrp
     ```
