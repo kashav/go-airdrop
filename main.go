@@ -30,7 +30,7 @@ var (
 	server *zeroconf.Server
 
 	errNoCmd  = errors.New("expected one of: broadcast or send")
-	errNoFile = errors.New("broadcast command should include path of file")
+	errNoFile = errors.New("send command should include path of file")
 )
 
 func main() {
