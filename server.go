@@ -43,6 +43,7 @@ func startDiscovery() {
 					continue
 				}
 
+				// FIXME: is 30 an appropriate amount?
 				fmt.Printf("%s%s:%d\n",
 					padRight(entry.Instance, " ", 30),
 					entry.AddrIPv4[0],
@@ -52,10 +53,19 @@ func startDiscovery() {
 					continue
 				}
 
-				// Write to this entry if and only if we haven't seen it yet.
-				if _, ok := seen[entry.Instance]; !ok {
-					go dial(entry.AddrIPv4[0], entry.Port)
+				// If we've already seen this client, we don't want to resend the
+				// request, so continue.
+				if _, ok := seen[entry.Instance]; ok {
+					continue
 				}
+
+				// If clients are specified (-send-to) and the list _doesn't_ include
+				// this entry, continue.
+				if len(sendClientList) > 0 && !sendClientList.Contains(entry.Instance) {
+					continue
+				}
+
+				go dial(entry.AddrIPv4[0], entry.Port)
 			}
 		}
 	}(entries)

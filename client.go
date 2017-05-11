@@ -89,9 +89,13 @@ func writeFile(conn net.Conn) error {
 		return nil
 	}
 	clientName, response := msg[0], msg[1]
-	seen[clientName] = true
 
+	// FIXME: if the response is not `Y`, we set this client's `seen` value,
+	// since we don't want to resend requests to clients who've declined. The
+	// caveat here is that if they reconnect with the same name (after accepting),
+	// they'll get a request again. Is this something to address?
 	if response != "Y" {
+		seen[clientName] = true
 		return nil
 	}
 

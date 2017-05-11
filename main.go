@@ -30,6 +30,8 @@ var (
 	listTypePtr  *string
 	listWatchPtr *bool
 
+	sendClientList stringList
+
 	server *zeroconf.Server
 
 	errNoCmd  = errors.New("expected one of: broadcast, list, or send")

@@ -5,9 +5,26 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 
 	"github.com/dustinkirkland/golang-petname"
 )
+
+type stringList []string
+
+func (s *stringList) String() string { return fmt.Sprintf("%v", *s) }
+func (s *stringList) Set(value string) error {
+	*s = strings.Split(value, ",")
+	return nil
+}
+func (s *stringList) Contains(client string) bool {
+	for _, v := range *s {
+		if v == client {
+			return true
+		}
+	}
+	return false
+}
 
 func parseFlags() {
 	if len(os.Args) < 2 {
@@ -19,13 +36,14 @@ func parseFlags() {
 	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
 
-	broadcastNamePtr := broadcastCmd.String("name", "", "Display name")
+	broadcastNamePtr := broadcastCmd.String("name", "", "Connection name")
 
-	listTypePtr = listCmd.String("type", "all", "Type of client to list (\"broadcast\", \"send\", or \"all\")")
-	listWatchPtr = listCmd.Bool("watch", false, "Watch for new connections (Ctrl+C to exit)")
+	listTypePtr = listCmd.String("type", "all", "Type of client (\"broadcast\", \"send\", or \"all\")")
+	listWatchPtr = listCmd.Bool("watch", false, "Listen for new connections (use Ctrl+C to exit)")
 
-	sendNamePtr := sendCmd.String("name", "", "Display name")
+	sendNamePtr := sendCmd.String("name", "", "Connection name")
 	sendFilePtr := sendCmd.String("file", "", "File to transfer")
+	sendCmd.Var(&sendClientList, "send-to", "Comma-separated list of client names")
 
 	op = os.Args[1]
 	switch op {
