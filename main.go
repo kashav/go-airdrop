@@ -27,9 +27,12 @@ var (
 	file string
 	seen map[string]bool
 
+	listTypePtr  *string
+	listWatchPtr *bool
+
 	server *zeroconf.Server
 
-	errNoCmd  = errors.New("expected one of: broadcast or send")
+	errNoCmd  = errors.New("expected one of: broadcast, list, or send")
 	errNoFile = errors.New("send command should include path of file")
 )
 
@@ -52,7 +55,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Fprintf(os.Stderr, "Connected as %s.\n", name)
+	if op != "list" {
+		fmt.Fprintf(os.Stderr, "Connected as %s.\n", name)
+	}
 
 	server = mkServer()
 	defer server.Shutdown()
@@ -60,6 +65,8 @@ func main() {
 	switch op {
 	case "broadcast":
 		listen()
+	case "list":
+		fallthrough
 	case "send":
 		startDiscovery()
 	}

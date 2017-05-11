@@ -16,9 +16,13 @@ func parseFlags() {
 	}
 
 	broadcastCmd := flag.NewFlagSet("broadcast", flag.ExitOnError)
+	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
 
 	broadcastNamePtr := broadcastCmd.String("name", "", "Display name")
+
+	listTypePtr = listCmd.String("type", "all", "Type of client to list (\"broadcast\", \"send\", or \"all\")")
+	listWatchPtr = listCmd.Bool("watch", false, "Watch for new connections (Ctrl+C to exit)")
 
 	sendNamePtr := sendCmd.String("name", "", "Display name")
 	sendFilePtr := sendCmd.String("file", "", "File to transfer")
@@ -28,6 +32,8 @@ func parseFlags() {
 	case "broadcast":
 		broadcastCmd.Parse(os.Args[2:])
 		name = *broadcastNamePtr
+	case "list":
+		listCmd.Parse(os.Args[2:])
 	case "send":
 		sendCmd.Parse(os.Args[2:])
 		if *sendFilePtr == "" {

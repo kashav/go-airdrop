@@ -66,7 +66,7 @@ func listen() {
 				continue
 			}
 		} else {
-			fmt.Fprintf(os.Stderr, "Failed to listen on %v\n", laddr)
+			fmt.Fprintf(os.Stderr, "Failed to listen on %v.\n", laddr)
 		}
 		break
 	}
@@ -98,7 +98,7 @@ func writeFile(conn net.Conn) error {
 	fmt.Printf("Sending %s to %s...", file, clientName)
 	if f, err := os.Open(file); err == nil {
 		io.Copy(conn, f)
-		fmt.Println(" done!")
+		fmt.Println("done!")
 	}
 
 	return nil
@@ -115,6 +115,6 @@ func dial(addr net.IP, port int) {
 		}
 		conn.Close()
 	} else {
-		fmt.Printf("Failed to dial on %v\n", addr)
+		fmt.Printf("Failed to dial on %v.\n", addr)
 	}
 }
