@@ -10,9 +10,7 @@
 
 ### Demo
 
-_Try to watch them together_, note that the sender **does not** start the transfer until receiving the `"Y"`.
-
-<a href="https://asciinema.org/a/119481"><img src="./.github/broadcaster.gif" width="425"></a> <a href="https://asciinema.org/a/119480"><img src="./.github/sender.gif" width="425"></a>
+<a href="https://asciinema.org/a/120148"><img src="./rdrp.gif"></a>
 
 ### Design
 
