@@ -71,7 +71,7 @@ func parseFlags() {
 		os.Exit(1)
 	}
 
-	if name == "" {
+	for name == "" {
 		name = petname.Generate(2, "-")
 	}
 }

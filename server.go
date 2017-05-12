@@ -15,7 +15,7 @@ func makeServer() *zeroconf.Server {
 		service,
 		domain,
 		port,
-		[]string{"rdrp", op},
+		[]string{"rdrp", op, time.Now().String()},
 		nil)
 	if err != nil {
 		panic(err)
@@ -33,7 +33,7 @@ func startDiscovery() {
 	entries := make(chan *zeroconf.ServiceEntry)
 	go func(results <-chan *zeroconf.ServiceEntry) {
 		for entry := range results {
-			if entry.Instance == name || len(entry.AddrIPv4) < 1 || entry.Text[1] == op {
+			if entry.Instance == name || len(entry.AddrIPv4) < 1 {
 				continue
 			}
 
@@ -43,10 +43,19 @@ func startDiscovery() {
 					continue
 				}
 
-				fmt.Fprintf(os.Stderr, "%s%s:%d\n",
-					padRight(entry.Instance, " ", 30),
+				t, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", entry.Text[2])
+				if err != nil {
+					continue
+				}
+
+				fmt.Printf(
+					"%s:%d %s %s %s\n",
 					entry.AddrIPv4[0],
-					entry.Port)
+					entry.Port,
+					padRight(entry.Text[1], " ", 9),
+					t.Round(time.Second).Format("Jan _2 15:04"),
+					entry.Instance)
+
 			case "send":
 				if entry.Text[1] != "broadcast" {
 					continue
@@ -73,7 +82,7 @@ func startDiscovery() {
 	var cancel context.CancelFunc
 
 	if op == "list" && !*listWatchPtr {
-		ctx, cancel = context.WithTimeout(context.Background(), time.Millisecond)
+		ctx, cancel = context.WithTimeout(context.Background(), 2*time.Millisecond)
 	} else {
 		ctx, cancel = context.WithCancel(context.Background())
 	}
