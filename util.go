@@ -60,7 +60,7 @@ func parseFlags() {
 		if *sendFilePtr != "" {
 			file = *sendFilePtr
 		} else if (stat.Mode() & os.ModeCharDevice) != 0 {
-			fmt.Fprintln(os.Stderr, errNoFile.Error())
+			fmt.Println(errNoFile.Error())
 			os.Exit(1)
 		}
 

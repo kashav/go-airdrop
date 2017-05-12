@@ -15,11 +15,12 @@ func readFile(conn net.Conn) error {
 		return err
 	}
 
-	msg := strings.Split(strings.Trim(string(buf), padder), separator)
-	if len(msg) < 2 {
+	rawResponse := strings.Split(strings.Trim(string(buf), padder), separator)
+	if len(rawResponse) < 2 {
 		return fmt.Errorf("")
 	}
-	file, connectionName := msg[0], msg[1]
+
+	file, connectionName := rawResponse[0], rawResponse[1]
 	if strings.TrimSpace(file) == "" {
 		file = "transfer request"
 	}
@@ -28,19 +29,14 @@ func readFile(conn net.Conn) error {
 	fmt.Fprintf(os.Stderr, "Accept %s from %s? (Y/n) ", file, connectionName)
 	fmt.Fscanf(os.Stderr, "%s", &input)
 
-	response := fmt.Sprintf("%s%s%s", name, separator, input)
-
-	if input != "Y" {
-		_, err = conn.Write([]byte(padRight(response, padder, 100)))
-		if err != nil {
-			return err
-		}
-		return fmt.Errorf("")
-	}
-
-	_, err = conn.Write([]byte(padRight(response, padder, 100)))
+	rawPayload := fmt.Sprintf("%s%s%s", name, separator, input)
+	_, err = conn.Write([]byte(padRight(rawPayload, padder, 100)))
 	if err != nil {
 		return err
+	}
+
+	if input != "Y" {
+		return fmt.Errorf("")
 	}
 
 	io.Copy(os.Stdout, conn)
@@ -60,16 +56,14 @@ func listen() {
 		if err != nil {
 			panic(err)
 		}
-		if conn != nil {
-			if err = readFile(conn); err != nil {
-				if err.Error() != "" && err.Error() != "EOF" {
-					fmt.Fprintln(os.Stderr, err.Error())
-				}
-				conn.Close()
-				continue
-			}
-		} else {
+		if conn == nil {
 			fmt.Fprintf(os.Stderr, "Failed to listen on %v.\n", laddr)
+		} else if err := readFile(conn); err != nil {
+			if !(err.Error() == "" || err.Error() == "EOF") {
+				fmt.Fprintln(os.Stderr, err.Error())
+			}
+			conn.Close()
+			continue
 		}
 		break
 	}
@@ -88,7 +82,8 @@ func getSourceFile(client string) (*os.File, string, error) {
 }
 
 func writeFile(conn net.Conn) error {
-	_, err := conn.Write([]byte(padRight(fmt.Sprintf("%s%s%s", file, separator, name), padder, 100)))
+	rawPayload := fmt.Sprintf("%s%s%s", file, separator, name)
+	_, err := conn.Write([]byte(padRight(rawPayload, padder, 100)))
 	if err != nil {
 		return err
 	}
@@ -99,11 +94,11 @@ func writeFile(conn net.Conn) error {
 		return err
 	}
 
-	msg := strings.Split(strings.Trim(string(buf), padder), separator)
-	if len(msg) < 2 {
+	rawResponse := strings.Split(strings.Trim(string(buf), padder), separator)
+	if len(rawResponse) < 2 {
 		return nil
 	}
-	clientName, response := msg[0], msg[1]
+	clientName, response := rawResponse[0], rawResponse[1]
 
 	// FIXME: if the response is not `Y`, we set this client's `seen` value,
 	// since we don't want to resend requests to clients who've declined. The
@@ -119,9 +114,9 @@ func writeFile(conn net.Conn) error {
 		return err
 	}
 
-	fmt.Fprint(os.Stderr, status)
+	fmt.Print(status)
 	io.Copy(conn, src)
-	fmt.Fprintln(os.Stderr, "done!")
+	fmt.Println("done!")
 
 	return nil
 }
@@ -131,12 +126,12 @@ func dial(addr net.IP, port int) {
 	if err != nil {
 		panic(err)
 	}
-	if conn != nil {
+	if conn == nil {
+		fmt.Printf("Failed to dial on %v.\n", addr)
+	} else {
 		if err = writeFile(conn); err != nil && err.Error() != "EOF" {
-			fmt.Fprintln(os.Stderr, err.Error())
+			fmt.Println(err.Error())
 		}
 		conn.Close()
-	} else {
-		fmt.Fprintf(os.Stderr, "Failed to dial on %v.\n", addr)
 	}
 }

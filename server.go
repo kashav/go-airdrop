@@ -26,7 +26,7 @@ func makeServer() *zeroconf.Server {
 func startDiscovery() {
 	resolver, err := zeroconf.NewResolver(nil)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to initialize resolver: %s\n", err.Error())
+		fmt.Printf("Failed to initialize resolver: %s\n", err.Error())
 		os.Exit(1)
 	}
 
@@ -55,7 +55,6 @@ func startDiscovery() {
 					padRight(entry.Text[1], " ", 9),
 					t.Round(time.Second).Format("Jan _2 15:04"),
 					entry.Instance)
-
 			case "send":
 				if entry.Text[1] != "broadcast" {
 					continue
@@ -78,9 +77,13 @@ func startDiscovery() {
 		}
 	}(entries)
 
-	var ctx context.Context
-	var cancel context.CancelFunc
+	var (
+		ctx    context.Context
+		cancel context.CancelFunc
+	)
 
+	// Use timeout-based context if we're NOT watching (this'll only run for
+	// 2 ms), otherwise use cancel-based.
 	if op == "list" && !*listWatchPtr {
 		ctx, cancel = context.WithTimeout(context.Background(), 2*time.Millisecond)
 	} else {
@@ -90,7 +93,7 @@ func startDiscovery() {
 
 	err = resolver.Browse(ctx, service, domain, entries)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to browse: %s\n", err.Error())
+		fmt.Printf("Failed to browse: %s\n", err.Error())
 	}
 
 	<-ctx.Done()
