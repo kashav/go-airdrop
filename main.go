@@ -35,7 +35,7 @@ var (
 	server *zeroconf.Server
 
 	errNoCmd  = errors.New("expected one of: broadcast, list, or send")
-	errNoFile = errors.New("send command should include path of file")
+	errNoFile = errors.New("expected either file path or data through stdin")
 )
 
 func main() {
@@ -61,7 +61,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Connected as %s.\n", name)
 	}
 
-	server = mkServer()
+	server = makeServer()
 	defer server.Shutdown()
 
 	switch op {

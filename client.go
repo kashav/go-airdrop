@@ -20,6 +20,9 @@ func readFile(conn net.Conn) error {
 		return fmt.Errorf("")
 	}
 	file, connectionName := msg[0], msg[1]
+	if strings.TrimSpace(file) == "" {
+		file = "transfer request"
+	}
 
 	var input string
 	fmt.Fprintf(os.Stderr, "Accept %s from %s? (Y/n) ", file, connectionName)
@@ -72,6 +75,18 @@ func listen() {
 	}
 }
 
+func getSourceFile(client string) (*os.File, string, error) {
+	if strings.TrimSpace(file) == "" {
+		return os.Stdin, fmt.Sprintf("Sending file to %s...", client), nil
+	}
+
+	f, err := os.Open(file)
+	if err != nil {
+		return nil, "", err
+	}
+	return f, fmt.Sprintf("Sending %s to %s...", file, client), err
+}
+
 func writeFile(conn net.Conn) error {
 	_, err := conn.Write([]byte(padRight(fmt.Sprintf("%s%s%s", file, separator, name), padder, 100)))
 	if err != nil {
@@ -99,11 +114,14 @@ func writeFile(conn net.Conn) error {
 		return nil
 	}
 
-	fmt.Printf("Sending %s to %s...", file, clientName)
-	if f, err := os.Open(file); err == nil {
-		io.Copy(conn, f)
-		fmt.Println("done!")
+	src, status, err := getSourceFile(clientName)
+	if err != nil {
+		return err
 	}
+
+	fmt.Fprint(os.Stderr, status)
+	io.Copy(conn, src)
+	fmt.Fprintln(os.Stderr, "done!")
 
 	return nil
 }
@@ -115,10 +133,10 @@ func dial(addr net.IP, port int) {
 	}
 	if conn != nil {
 		if err = writeFile(conn); err != nil && err.Error() != "EOF" {
-			fmt.Println(err.Error())
+			fmt.Fprintln(os.Stderr, err.Error())
 		}
 		conn.Close()
 	} else {
-		fmt.Printf("Failed to dial on %v.\n", addr)
+		fmt.Fprintf(os.Stderr, "Failed to dial on %v.\n", addr)
 	}
 }

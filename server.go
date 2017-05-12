@@ -9,7 +9,7 @@ import (
 	"github.com/grandcat/zeroconf"
 )
 
-func mkServer() *zeroconf.Server {
+func makeServer() *zeroconf.Server {
 	server, err := zeroconf.Register(
 		name,
 		service,
@@ -26,7 +26,7 @@ func mkServer() *zeroconf.Server {
 func startDiscovery() {
 	resolver, err := zeroconf.NewResolver(nil)
 	if err != nil {
-		fmt.Printf("Failed to initialize resolver: %s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "Failed to initialize resolver: %s\n", err.Error())
 		os.Exit(1)
 	}
 
@@ -43,8 +43,7 @@ func startDiscovery() {
 					continue
 				}
 
-				// FIXME: is 30 an appropriate amount?
-				fmt.Printf("%s%s:%d\n",
+				fmt.Fprintf(os.Stderr, "%s%s:%d\n",
 					padRight(entry.Instance, " ", 30),
 					entry.AddrIPv4[0],
 					entry.Port)
@@ -82,7 +81,7 @@ func startDiscovery() {
 
 	err = resolver.Browse(ctx, service, domain, entries)
 	if err != nil {
-		fmt.Printf("Failed to browse: %s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "Failed to browse: %s\n", err.Error())
 	}
 
 	<-ctx.Done()

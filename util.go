@@ -54,13 +54,17 @@ func parseFlags() {
 		listCmd.Parse(os.Args[2:])
 	case "send":
 		sendCmd.Parse(os.Args[2:])
-		if *sendFilePtr == "" {
+
+		stat, _ := os.Stdin.Stat()
+		// If `-file` is empty and stdin is empty, exit with errNoFile.
+		if *sendFilePtr != "" {
+			file = *sendFilePtr
+		} else if (stat.Mode() & os.ModeCharDevice) != 0 {
 			fmt.Fprintln(os.Stderr, errNoFile.Error())
 			os.Exit(1)
 		}
 
 		name = *sendNamePtr
-		file = *sendFilePtr
 		seen = make(map[string]bool, 0)
 	default:
 		fmt.Fprintln(os.Stderr, errNoCmd.Error())
