@@ -42,38 +42,48 @@ func parseFlags() error {
 	}
 
 	broadcastCmd := flag.NewFlagSet("broadcast", flag.ExitOnError)
-	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
-	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
-
+	broadcastDebugPtr := broadcastCmd.Bool("debug", false, "Show log output")
 	broadcastNamePtr := broadcastCmd.String("name", "", "Connection name")
 
+	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
+	listDebugPtr := listCmd.Bool("debug", false, "Show log output")
 	listTypePtr = listCmd.String("type", "all", "Type of client (\"broadcast\", \"send\", or \"all\")")
 	listWatchPtr = listCmd.Bool("watch", false, "Listen for new connections (use Ctrl+C to exit)")
 
+	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
+	sendDebugPtr := sendCmd.Bool("debug", false, "Show log output")
 	sendNamePtr := sendCmd.String("name", "", "Connection name")
 	sendFilePtr := sendCmd.String("file", "", "File to transfer")
-	sendCmd.Var(&sendClientList, "send-to", "Comma-separated list of client names")
+	sendCmd.Var(&sendClientList, "to", "Comma-separated list of client names")
 
 	op = os.Args[1]
 	switch op {
 	case "broadcast":
 		broadcastCmd.Parse(os.Args[2:])
+		debug = *broadcastDebugPtr
 		name = *broadcastNamePtr
 	case "list":
 		listCmd.Parse(os.Args[2:])
+		debug = *listDebugPtr
 	case "send":
 		sendCmd.Parse(os.Args[2:])
-
-		stat, _ := os.Stdin.Stat()
-		// If `-file` is empty and stdin is empty, exit with errNoFile.
-		if *sendFilePtr != "" {
-			file = *sendFilePtr
-		} else if (stat.Mode() & os.ModeCharDevice) != 0 {
-			return errNoFile
-		}
-
+		debug = *sendDebugPtr
 		name = *sendNamePtr
 		seen = make(map[string]bool, 0)
+
+		if *sendFilePtr != "" {
+			file = *sendFilePtr
+			break
+		}
+
+		stat, err := os.Stdin.Stat()
+		if err != nil {
+			return err
+		}
+		if (stat.Mode() & os.ModeCharDevice) != 0 {
+			// If `-file` is empty and stdin is empty, we exit with errNoFile.
+			return errNoFile
+		}
 	default:
 		return errNoCmd
 	}
@@ -92,13 +102,13 @@ func getOpenPort() (int, error) {
 		return -1, err
 	}
 
-	l, err := net.ListenTCP(iptype, addr)
+	listener, err := net.ListenTCP(iptype, addr)
 	if err != nil {
 		return -1, err
 	}
-	defer l.Close()
+	defer listener.Close()
 
-	return l.Addr().(*net.TCPAddr).Port, nil
+	return listener.Addr().(*net.TCPAddr).Port, nil
 }
 
 // Right pad a string length characters.

@@ -4,12 +4,17 @@
 
 > A cross-platform command line tool for sending and receiving files over your local network, inspired by [AirDrop](https://support.apple.com/en-ca/HT204144).
 
-- [Demo](#demo)
-- [Design](#design)
-- [Installation](#installation--setup)
-- [Usage](#usage)
-  + [Docker](#use-with-docker)
-- [Contribute](#contribute)
+### Contents
+
+  - [Demo](#demo)
+  - [Design](#design)
+  - [Installation](#installation--setup)
+  - [Usage](#usage)
+    + [Send](#sender)
+    + [Broadcast](#broadcaster)
+    + [List](#list)
+    + [Docker](#use-with-docker)
+  - [Contribute](#contribute)
 
 ### Demo
 
@@ -27,114 +32,133 @@ Read more about mDNS: [RFC 6762](https://tools.ietf.org/html/rfc6762) and DNS-SD
 
 ### Installation / setup
 
-  - Go should be [installed](https://golang.org/doc/install) and [configured](https://golang.org/doc/install#testing).
+Go should be [installed](https://golang.org/doc/install) and [configured](https://golang.org/doc/install#testing).
 
-  - Install with Go:
+Install with Go:
 
-    ```sh
-    $ go get -v github.com/kshvmdn/rdrp/...
-    $ which rdrp
-    $GOPATH/bin/rdrp
-    ```
+  ```sh
+  $ go get -v github.com/kshvmdn/rdrp/...
+  $ which rdrp
+  $GOPATH/bin/rdrp
+  ```
 
-  - Or, install directly via source:
+Or, install directly via source:
 
-    ```sh
-    $ git clone https://github.com/kshvmdn/rdrp.git $GOPATH/src/github.com/kshvmdn/rdrp
-    $ cd $_ # $GOPATH/src/github.com/kshvmdn/rdrp
-    $ make install && make
-    $ ./rdrp
-    ```
+  ```sh
+  $ git clone https://github.com/kshvmdn/rdrp.git $GOPATH/src/github.com/kshvmdn/rdrp
+  $ cd $_ # $GOPATH/src/github.com/kshvmdn/rdrp
+  $ make install && make
+  $ ./rdrp
+  ```
 
 ### Usage
 
-  - There's two parties involved in a single transaction: the sender and the receiver.
+Run rdrp with `-help` to view the usage dialogue.
 
-  - To send a file over your local network, use the `send` command. Provide the file path with the `-file` flag OR pass the file's contents via stdin. Every broadcaster will receive a request to transfer the file. This process continues until aborted (Ctrl+C).
+  ```sh
+  $ rdrp -help
+  Usage: rdrp [broadcast|list|send] [options]
+  ```
 
-    ```sh
-    $ rdrp send -help
-    Usage of send:
-      -file string
-          File to transfer
-      -name string
-          Connection name
-      -send-to value
-          Comma-separated list of client names
-    ```
+There's two parties involved in a single transaction: the [sender](#sender) and the [receiver](#broadcaster).
 
-  - Some basic examples:
+#### Sender
 
-    ```sh
-    $ rdrp send -file README.md
-    ```
+To send a file, use the `send` command. Provide the file path with the `-file` flag OR pass the file's contents via stdin. Every broadcaster will receive a request to transfer the file (unless names are specified with the `-to` flag). This process continues until aborted (Ctrl+C).
 
-    ```sh
-    $ ./rdrp send -name sender < README.md
-    ```
+  ```sh
+  $ rdrp send -help
+  Usage of send:
+    -debug
+        Show log output
+    -file string
+        File to transfer
+    -name string
+        Connection name
+    -to value
+        Comma-separated list of client names
+  ```
 
-    ```sh
-    $ tar -cvzf archive.tar.gz /path/to/directory/
-    $ rdrp send -file archive.tar.gz -send-to a
-    ```
+##### Examples
 
-    ```sh
-    $ echo "hello" | ./rdrp send -send-to b,c
-    ```
+```sh
+$ rdrp send -file README.md
+```
 
-  - To broadcast yourself as a receiver (i.e. someone receiving a file), use the `broadcast` command. You'll be listening for incoming `send` requests. Upon a new connection, you'll be prompted on whether you'd like to accept the file or not, just like AirDrop. The incoming file is copied to stdout.
+```sh
+$ rdrp send -name sender < README.md
+```
 
-    ```sh
-    $ rdrp broadcast -help
-    Usage of broadcast:
-      -name string
-          Connection name
-    ```
+```sh
+$ tar -cvzf archive.tar.gz /path/to/directory/
+$ rdrp send -file archive.tar.gz -send-to a
+```
 
-  - Some basic examples:
+```sh
+$ echo "hello" | rdrp send -send-to b,c
+```
 
-    ```sh
-    $ rdrp broadcast # output is copied to stdout
-    ...
-    ```
+#### Broadcaster
 
-    ```sh
-    $ rdrp -name b broadcast > archive.tar.gz
-    ```
+To broadcast yourself as a receiver (i.e. someone receiving a file), use the `broadcast` command. You'll be listening for incoming `send` requests. Upon a new connection, you'll be prompted on whether you'd like to accept the file or not, just like AirDrop. The incoming file is copied to stdout.
 
-  - Note that each role has an **optional** name flag, if not provided, a name is chosen randomly (which is what happened in [the demo above](#demo)).
+  ```sh
+  $ rdrp broadcast -help
+  Usage of broadcast:
+  -debug
+      Show log output
+  -name string
+      Connection name
+  ```
 
-  - You can also view all connected clients with `list`. Use `-type` to specify the type of clients to list and `-watch` to listen for new connections.
+##### Examples
 
-    ```
-    $ rdrp list -help
-    Usage of list:
-      -type string
-          Type of client ("broadcast", "send", or "all") (default "all")
-      -watch
-          Listen for new connections (use Ctrl+C to exit)
-    ```
+  ```sh
+  $ rdrp broadcast # output is copied to stdout
+  ...
+  ```
+
+  ```sh
+  $ rdrp -name b broadcast > archive.tar.gz
+  ```
+
+Note that each of the above roles has an **optional** name flag, if not provided, a name is chosen randomly (which is what happened in [the demo above](#demo)).
+
+#### List
+
+You can view all connected clients with `list`. Use `-type` to specify the type of clients to list and `-watch` to listen for new connections.
+
+  ```
+  $ rdrp list -help
+  Usage of list:
+  -debug
+    	Show log output
+  -type string
+    	Type of client ("broadcast", "send", or "all") (default "all")
+  -watch
+    	Listen for new connections (use Ctrl+C to exit)
+  ```
 
 #### Use with Docker
 
-  - Start off by cloning the repository (if you've already cloned, just make sure you're in the project root).
+Start off by cloning the repository (if you've already cloned, just make sure you're in the project root):
 
-    ```sh
-    $ git clone https://github.com/kshvmdn/rdrp
-    $ cd rdrp
-    ```
+  ```sh
+  $ git clone https://github.com/kshvmdn/rdrp
+  $ cd rdrp
+  ```
 
-  - Build the Docker image.
+Build the Docker image:
 
-    ```sh
-    $ docker build -t kshvmdn/rdrp .
-    ```
+  ```sh
+  $ docker build -t kshvmdn/rdrp .
+  ```
 
-  - Run it! The `--rm` flag automatically removes the container when the program exits.
+And run it! The `--rm` flag automatically removes the container when the program exits.
 
-    ```sh
-    $ docker run --rm kshvmdn/rdrp [broadcast|list|send] ...
-    ```
+  ```sh
+  $ docker run --rm kshvmdn/rdrp [broadcast|list|send] ...
+  ```
 
 ### Contribute
 
@@ -146,9 +170,10 @@ The demo GIF was generated by [asciinema](https://asciinema.org/), with [tmux](h
 
 #### TODO
 
+- [ ] Add `-private` flag for sender/broadcaster to have "private" transfer (i.e. nobody can see that they're connected).
+- [ ] The preliminary work for running this through Docker _is_ done, however it doesn't quite run completely. Each of the commands (broadcast, list, send) work fine and the clients _do_ find each other, however the transfers hang. I'm fairly certain that this is happening because the ports aren't being exposed in the container. I'm not sure if there's a way to fix this though, since the ports are randomly chosen on initialization. If anyone has a solution for this, I'd love to hear it!
+- [ ] Check that the registration name is not already being used.
 - [x] Add an option for senders to provide a list of names to send the file to (right now, when a file is sent, all connected clients get the prompt).
 - [x] Add a `-list` flag to list all currently connected peers (this'll help with the previous TODO I think).
-- [ ] Check that the registration name is not already being used.
 - [x] Add an option to send files via stdin.
 - [x] Test. This is only tested on macOS right now, would be great if there was some confirmation that it works on Linux as well (and I guess Windows too).
-- [ ] The preliminary work for running this through Docker _is_ done, however it doesn't quite run completely. Each of the commands (broadcast, list, send) work fine and the clients _do_ find each other, however the transfers hang. I'm fairly certain that this is happening because the ports aren't being exposed in the container. I'm not sure if there's a way to fix this though, since the ports are randomly chosen on initialization. If anyone has a solution for this, I'd love to hear it!

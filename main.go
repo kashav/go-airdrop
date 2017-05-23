@@ -20,11 +20,12 @@ const (
 )
 
 var (
-	port int
-	op   string
-	name string
-	file string
-	seen map[string]bool
+	port  int
+	debug bool
+	op    string
+	name  string
+	file  string
+	seen  map[string]bool
 
 	listTypePtr  *string
 	listWatchPtr *bool
@@ -33,23 +34,26 @@ var (
 
 	server *zeroconf.Server
 
-	errNoCmd  = errors.New("expected one of: broadcast, list, or send")
+	errNoCmd  = fmt.Errorf("Usage: %s [broadcast|list|send] [options]", os.Args[0])
 	errNoFile = errors.New("expected either file path or data through stdin")
 )
 
 func main() {
 	var err error
 
-	if err = redirectLogOutput(); err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
-	}
-
 	// Set seed for golang-petname (to generate instance names).
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	if err = parseFlags(); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
+
+	if !debug {
+		if err = redirectLogOutput(); err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
 	}
 
 	if port, err = getOpenPort(); err != nil {
