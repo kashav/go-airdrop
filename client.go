@@ -78,7 +78,8 @@ func getSourceFile(client string) (*os.File, string, error) {
 	if err != nil {
 		return nil, "", err
 	}
-	return f, fmt.Sprintf("Sending %s to %s...", file, client), err
+
+	return f, fmt.Sprintf("Sending %s to %s...", file, client), nil
 }
 
 func writeFile(conn net.Conn) error {

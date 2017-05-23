@@ -3,7 +3,7 @@
 all: build
 
 build:
-	go build -v -o ./rdrp
+	go build -o ./rdrp ./...
 
 clean:
 	rm -f ./rdrp

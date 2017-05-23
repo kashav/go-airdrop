@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"math/rand"
 	"os"
 	"time"
@@ -16,8 +15,8 @@ const (
 	service = "_rdrp._tcp"
 	domain  = "local."
 
-	padder    = ":"
-	separator = ";"
+	padder    = ":::"
+	separator = ";;;"
 )
 
 var (
@@ -39,21 +38,22 @@ var (
 )
 
 func main() {
-	// Redirect all log output to /dev/null.
-	devNull, err := os.Open(os.DevNull)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+	var err error
+
+	if err = redirectLogOutput(); err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-	log.SetOutput(devNull)
 
 	// Set seed for golang-petname (to generate instance names).
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	parseFlags()
-	port, err = getOpenPort()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+	if err = parseFlags(); err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+	}
+
+	if port, err = getOpenPort(); err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 

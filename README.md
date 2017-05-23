@@ -1,5 +1,7 @@
 ## rdrp
 
+[![Build Status](https://travis-ci.org/kshvmdn/rdrp.svg?branch=master)](https://travis-ci.org/kshvmdn/rdrp)
+
 > A cross-platform command line tool for sending and receiving files over your local network, inspired by [AirDrop](https://support.apple.com/en-ca/HT204144).
 
 - [Demo](#demo)

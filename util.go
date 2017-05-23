@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"strings"
@@ -10,13 +11,11 @@ import (
 	"github.com/dustinkirkland/golang-petname"
 )
 
+// stringList is used to handle a comma-separated input list.
 type stringList []string
 
-func (s *stringList) String() string { return fmt.Sprintf("%v", *s) }
-func (s *stringList) Set(value string) error {
-	*s = strings.Split(value, ",")
-	return nil
-}
+func (s *stringList) String() string         { return fmt.Sprintf("%v", *s) }
+func (s *stringList) Set(value string) error { *s = strings.Split(value, ","); return nil }
 func (s *stringList) Contains(client string) bool {
 	for _, v := range *s {
 		if v == client {
@@ -26,10 +25,20 @@ func (s *stringList) Contains(client string) bool {
 	return false
 }
 
-func parseFlags() {
+// Redirect all log output to /dev/null.
+func redirectLogOutput() error {
+	devNull, err := os.Open(os.DevNull)
+	if err != nil {
+		return err
+	}
+	log.SetOutput(devNull)
+	return nil
+}
+
+// Parse the command line flags.
+func parseFlags() error {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, errNoCmd.Error())
-		os.Exit(1)
+		return errNoCmd
 	}
 
 	broadcastCmd := flag.NewFlagSet("broadcast", flag.ExitOnError)
@@ -60,22 +69,23 @@ func parseFlags() {
 		if *sendFilePtr != "" {
 			file = *sendFilePtr
 		} else if (stat.Mode() & os.ModeCharDevice) != 0 {
-			fmt.Println(errNoFile.Error())
-			os.Exit(1)
+			return errNoFile
 		}
 
 		name = *sendNamePtr
 		seen = make(map[string]bool, 0)
 	default:
-		fmt.Fprintln(os.Stderr, errNoCmd.Error())
-		os.Exit(1)
+		return errNoCmd
 	}
 
 	for name == "" {
 		name = petname.Generate(2, "-")
 	}
+
+	return nil
 }
 
+// Get the next open port.
 func getOpenPort() (int, error) {
 	addr, err := net.ResolveTCPAddr(iptype, ":0")
 	if err != nil {
@@ -91,6 +101,7 @@ func getOpenPort() (int, error) {
 	return l.Addr().(*net.TCPAddr).Port, nil
 }
 
+// Right pad a string length characters.
 func padRight(str, pad string, length int) string {
 	for {
 		str += pad
