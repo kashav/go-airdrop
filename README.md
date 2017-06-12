@@ -20,7 +20,7 @@
 
 ### Demo
 
-<a href="https://asciinema.org/a/120148"><img src="./rdrp.gif"></a>
+<a href="https://asciinema.org/a/120148"><img src="./media/rdrp.gif"></a>
 
 ### Design
 
