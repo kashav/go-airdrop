@@ -1,6 +1,4 @@
-## rdrp
-
-[![Build Status](https://travis-ci.org/kshvmdn/rdrp.svg?branch=master)](https://travis-ci.org/kshvmdn/rdrp)
+## rdrp [![Build Status](https://travis-ci.org/kshvmdn/rdrp.svg?branch=master)](https://travis-ci.org/kshvmdn/rdrp) [![Go Report Card](https://goreportcard.com/badge/github.com/kshvmdn/rdrp)](https://goreportcard.com/report/github.com/kshvmdn/rdrp)
 
 > A cross-platform command line tool for sending and receiving files over your local network, inspired by [AirDrop](https://support.apple.com/en-ca/HT204144).
 
@@ -12,8 +10,8 @@
   - [Usage](#usage)
     + [Send](#sender)
     + [Broadcast](#broadcaster)
-    + [List](#list)
-    + [Docker](#use-with-docker)
+    + [Monitor](#list)
+  - [Docker](#use-with-docker)
   - [Contribute](#contribute)
   - [Related](#related)
   - [License](#license)
@@ -49,68 +47,102 @@ Or, install directly via source:
   ```sh
   $ git clone https://github.com/kshvmdn/rdrp.git $GOPATH/src/github.com/kshvmdn/rdrp
   $ cd $_ # $GOPATH/src/github.com/kshvmdn/rdrp
-  $ make install && make
+  $ make install all
   $ ./rdrp
   ```
 
 ### Usage
 
-Run rdrp with `-help` to view the usage dialogue.
+Run rdrp with the `--help` flag to view the usage dialogue.
 
   ```sh
-  $ rdrp -help
-  Usage: rdrp [broadcast|list|send] [options]
+  $ rdrp --help
+  usage: rdrp [<flags>] <command> [<args> ...]
+
+  Send and receive files over your local network.
+
+  Flags:
+        --help       Show context-sensitive help (also try --help-long and --help-man).
+    -n, --name=NAME  Set your connection name.
+    -d, --debug      Enable debug mode.
+        --version    Show application version.
+
+  Commands:
+    help [<command>...]
+      Show help.
+
+    broadcast
+      Receive a file.
+
+    list [<flags>]
+      View active clients.
+
+    send [<flags>]
+      Send a file.
+
   ```
 
-There's two parties involved in a single transaction: the [sender](#sender) and the [receiver](#broadcaster).
+There's two parties involved in a single transaction: the [sender](#send) and the [receiver](#broadcast).
 
-#### Sender
+#### Send
 
-To send a file, use the `send` command. Provide the file path with the `-file` flag OR pass the file's contents via stdin. Every broadcaster will receive a request to transfer the file (unless names are specified with the `-to` flag). This process continues until aborted (Ctrl+C).
+To send a file, use the `send` command. Provide the file path with the `--file` flag or pass the file's contents via stdin. 
+
+Every broadcaster will receive a request to transfer the file (unless names are specified with the `--to` flag). This process continues until aborted (Ctrl+C).
 
   ```sh
-  $ rdrp send -help
-  Usage of send:
-    -debug
-        Show log output
-    -file string
-        File to transfer
-    -name string
-        Connection name
-    -to value
-        Comma-separated list of client names
+  $ rdrp help send
+  usage: rdrp send [<flags>]
+
+  Send a file.
+
+  Flags:
+        --help       Show context-sensitive help (also try --help-long and --help-man).
+    -n, --name=NAME  Set your connection name.
+    -d, --debug      Enable debug mode.
+        --version    Show application version.
+    -f, --file=FILE  Specify the transfer file (you may optionally pass your file via stdin).
+        --to=TO ...  Comma-separated list of client names.
+
   ```
 
 ##### Examples
 
 ```sh
-$ rdrp send -file README.md
+$ rdrp send --file=README.md
 ```
 
 ```sh
-$ rdrp send -name sender < README.md
+$ rdrp send --name sender < README.md
 ```
 
 ```sh
 $ tar -cvzf archive.tar.gz /path/to/directory/
-$ rdrp send -file archive.tar.gz -send-to a
+$ rdrp send --file=archive.tar.gz --to=a
 ```
 
 ```sh
-$ echo "hello" | rdrp send -send-to b,c
+$ echo "hello" | rdrp send --to=b,c
 ```
 
-#### Broadcaster
+#### Broadcast
 
-To broadcast yourself as a receiver (i.e. someone receiving a file), use the `broadcast` command. You'll be listening for incoming `send` requests. Upon a new connection, you'll be prompted on whether you'd like to accept the file or not, just like AirDrop. The incoming file is copied to stdout.
+To broadcast yourself as a receiver (i.e. someone receiving a file), use the `broadcast` command.
+
+You'll be listening for incoming `send` requests. Upon a new connection, you'll be prompted on whether you'd like to accept the file or not, just like AirDrop. The incoming file is copied to stdout.
 
   ```sh
   $ rdrp broadcast -help
-  Usage of broadcast:
-  -debug
-      Show log output
-  -name string
-      Connection name
+  usage: rdrp broadcast
+
+  Receive a file.
+
+  Flags:
+        --help       Show context-sensitive help (also try --help-long and --help-man).
+    -n, --name=NAME  Set your connection name.
+    -d, --debug      Enable debug mode.
+        --version    Show application version.
+
   ```
 
 ##### Examples
@@ -121,29 +153,33 @@ To broadcast yourself as a receiver (i.e. someone receiving a file), use the `br
   ```
 
   ```sh
-  $ rdrp -name b broadcast > archive.tar.gz
+  $ rdrp broadcast --name b > archive.tar.gz
   ```
 
-Note that each of the above roles has an **optional** name flag, if not provided, a name is chosen randomly (which is what happened in [the demo above](#demo)).
+Note that each of the above roles has an **optional** name flag, a name is chosen at random if not provided (which is what happened in [the demo above](#demo)).
 
 #### List
 
-You can view all connected clients with `list`. Use `-type` to specify the type of clients to list and `-watch` to listen for new connections.
+You can view all connected clients with `list`. Use `--type` to specify the type of clients to list and `--watch` to listen for new connections.
 
   ```
   $ rdrp list -help
-  Usage of list:
-  -debug
-    	Show log output
-  -type string
-    	Type of client ("broadcast", "send", or "all") (default "all")
-  -watch
-    	Listen for new connections (use Ctrl+C to exit)
+
+  View active clients.
+
+  Flags:
+        --help        Show context-sensitive help (also try --help-long and --help-man).
+    -n, --name=NAME   Set your connection name.
+    -d, --debug       Enable debug mode.
+        --version     Show application version.
+    -w, --watch       Watch for new connections.
+    -t, --type="all"  Specify which type of client to listen for.
+
   ```
 
-#### Use with Docker
+### Use with Docker
 
-Start off by cloning the repository (if you've already cloned, just make sure you're in the project root):
+Start off by cloning the repository (if you've already cloned, navigate to the project root):
 
   ```sh
   $ git clone https://github.com/kshvmdn/rdrp
@@ -166,9 +202,19 @@ And run it! The `--rm` flag automatically removes the container when the program
 
 This project is completely open source, feel free to [open an issue](https://github.com/kshvmdn/rdrp/issues) or [submit a pull request](https://github.com/kshvmdn/rdrp/pulls).
 
-Before submitting a PR, please ensure your changes comply with [Golint](https://github.com/golang/lint), use `make lint` to test this.
+Before submitting a PR, please ensure that _tests are passing_ and that the linter is happy. The following commands may be of use.
 
-The demo GIF was generated by [asciinema](https://asciinema.org/), with [tmux](https://tmux.github.io/) ([recording tmux sessions with asciinema](https://github.com/asciinema/asciinema/wiki/Recording-tmux-session)).
+```sh
+$ make install \
+       get-tools
+$ make fmt \
+       vet \
+       lint
+$ make test \
+       coverage
+```
+
+The demo GIF was generated with [asciinema](https://asciinema.org/), with [tmux](https://tmux.github.io/).
 
 ### Related
 
