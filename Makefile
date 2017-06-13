@@ -1,8 +1,13 @@
 NAME := rdrp
+MAIN := ./cmd/$(NAME)
 SRCS := $(shell find . -type f -name '*.go')
 PKGS := $(shell go list ./... | grep -v /vendor)
 
-.PHONY: all coverage clean fmt fmt-save get-tools install lint test vet
+build = GOOS=$(1) GOARCH=$(2) go build -o build/$(NAME)$(3) $(MAIN)
+tar = cd build && tar -cvzf $(1)_$(2).tar.gz $(NAME)$(3) && rm $(NAME)$(3)
+zip = cd build && zip $(1)_$(2).zip $(NAME)$(3) && rm $(NAME)$(3)
+
+.PHONY: all build coverage clean fmt fmt-save get-tools install lint test vet
 .DEFAULT: all
 
 all: rdrp
@@ -17,12 +22,12 @@ get-tools:
 
 clean:
 	@echo "+ $@"
-	rm -rf build ./$(NAME)
+	rm -rf build $(NAME)
 	mkdir -p build
 
 rdrp: $(SRCS)
 	@echo "+ $@"
-	@go build -o ./$(NAME) ./cmd/rdrp
+	@go build -o $(NAME) $(MAIN)
 
 fmt:
 	@echo "+ $@"
@@ -53,7 +58,7 @@ coverage:
 		go test -test.short -race -coverprofile="../../../$$pkg/coverage.txt" $${pkg} || exit 1; \
 	done
 
-binaries: darwin linux windows
+build: darwin linux windows
 
 ##### DARWIN BUILDS #####
 
