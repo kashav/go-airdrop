@@ -15,3 +15,7 @@
 
 # Compiled executables
 rdrp
+build
+
+# Allow cmd/rdrp
+!cmd/rdrp
