@@ -1,0 +1,68 @@
+{
+	"ImportPath": "github.com/kshvmdn/rdrp",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/alecthomas/template",
+			"Rev": "a0175ee3bccc567396460bf5acd36800cb10c49c"
+		},
+		{
+			"ImportPath": "github.com/alecthomas/template/parse",
+			"Rev": "a0175ee3bccc567396460bf5acd36800cb10c49c"
+		},
+		{
+			"ImportPath": "github.com/alecthomas/units",
+			"Rev": "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a"
+		},
+		{
+			"ImportPath": "github.com/cenkalti/backoff",
+			"Comment": "v1.0.0-19-g5d150e7",
+			"Rev": "5d150e7eec023ce7a124856b37c68e54b4050ac7"
+		},
+		{
+			"ImportPath": "github.com/dustinkirkland/golang-petname",
+			"Rev": "1f4996aa8aa05ee066aaf9e3179d340b48c6da74"
+		},
+		{
+			"ImportPath": "github.com/grandcat/zeroconf",
+			"Rev": "e4a16e81aad43bf839b50c68f08488c3e865f707"
+		},
+		{
+			"ImportPath": "github.com/miekg/dns",
+			"Rev": "e78414ef75607394ad7d917824f07f381df2eafa"
+		},
+		{
+			"ImportPath": "golang.org/x/net/bpf",
+			"Rev": "1a68b1313cf4ad7778376e82641197b60c02f65c"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "1a68b1313cf4ad7778376e82641197b60c02f65c"
+		},
+		{
+			"ImportPath": "golang.org/x/net/internal/iana",
+			"Rev": "1a68b1313cf4ad7778376e82641197b60c02f65c"
+		},
+		{
+			"ImportPath": "golang.org/x/net/internal/socket",
+			"Rev": "1a68b1313cf4ad7778376e82641197b60c02f65c"
+		},
+		{
+			"ImportPath": "golang.org/x/net/ipv4",
+			"Rev": "1a68b1313cf4ad7778376e82641197b60c02f65c"
+		},
+		{
+			"ImportPath": "golang.org/x/net/ipv6",
+			"Rev": "1a68b1313cf4ad7778376e82641197b60c02f65c"
+		},
+		{
+			"ImportPath": "gopkg.in/alecthomas/kingpin.v2",
+			"Comment": "v2.2.4",
+			"Rev": "7f0871f2e17818990e4eed73f9b5c2f429501228"
+		}
+	]
+}
