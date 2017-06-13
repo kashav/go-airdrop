@@ -91,7 +91,7 @@ func (s *Sender) getSrcFile(client string) (src *os.File, status string, err err
 
 // write initiates a conversation with the connected client and transfers the
 // associated source file.
-func (s *Sender) write(conn net.Conn) error {
+func (s *Sender) write(conn io.ReadWriter) error {
 	payload := s.FileName + separator + s.Client.Name
 	if _, err := conn.Write([]byte(padRight(payload, padder, 100))); err != nil {
 		return err
@@ -119,17 +119,15 @@ func (s *Sender) write(conn net.Conn) error {
 	}
 
 	fmt.Print(status)
-	if _, err := io.Copy(conn, src); err != nil {
+	if _, err = io.Copy(conn, src); err != nil {
 		fmt.Println("failed :(\a")
 		return err
 	}
 	fmt.Println("done!")
 
 	// Reset src offset for subsequent transfers.
-	if _, err := src.Seek(0, 0); err != nil {
-		return err
-	}
-	return nil
+	_, err = src.Seek(0, 0)
+	return err
 }
 
 // dial creates a connection with client at addr:port.

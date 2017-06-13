@@ -24,17 +24,11 @@ func (b Broadcaster) Work() (err error) {
 		return err
 	}
 	defer server.Shutdown()
-
 	b.Client.printName()
-
-	if err := b.listen(); err != nil {
-		return err
-	}
-
-	return nil
+	return b.listen()
 }
 
-// listen listens for transfer requests and initiates a converstaion upon
+// listen listens for transfer requests and initiates a conversation upon
 // new connections.
 func (b *Broadcaster) listen() error {
 	laddr := fmt.Sprintf(":%d", port)
@@ -66,9 +60,9 @@ func (b *Broadcaster) listen() error {
 }
 
 // read interacts with Sender at conn and copies the associated file to stdout.
-func (b *Broadcaster) read(conn net.Conn) (ok bool, err error) {
+func (b *Broadcaster) read(conn io.ReadWriter) (ok bool, err error) {
 	buf := make([]byte, 100)
-	if _, err := conn.Read(buf); err != nil {
+	if _, err = conn.Read(buf); err != nil {
 		return false, err
 	}
 
