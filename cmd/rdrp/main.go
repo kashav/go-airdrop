@@ -7,8 +7,8 @@ import (
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/kshvmdn/rdrp"
-	"github.com/kshvmdn/rdrp/version"
+	"github.com/kashav/rdrp"
+	"github.com/kashav/rdrp/version"
 )
 
 var (
