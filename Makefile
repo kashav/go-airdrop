@@ -1,7 +1,6 @@
 NAME := rdrp
 MAIN := ./cmd/$(NAME)
 SRCS := $(shell find . -type f -name '*.go')
-PKGS := $(shell go list ./... | grep -v /vendor)
 
 build = GOOS=$(1) GOARCH=$(2) go build -o build/$(NAME)$(3) $(MAIN)
 tar = cd build && tar -cvzf $(1)_$(2).tar.gz $(NAME)$(3) && rm $(NAME)$(3)
@@ -11,10 +10,6 @@ zip = cd build && zip $(1)_$(2).zip $(NAME)$(3) && rm $(NAME)$(3)
 .DEFAULT: all
 
 all: rdrp
-
-install:
-	@echo "+ $@"
-	@go install $(PKGS)
 
 get-tools:
 	@echo "+ $@"
@@ -31,7 +26,7 @@ rdrp: $(SRCS)
 
 fmt:
 	@echo "+ $@"
-	@test -z "$$(gofmt -s -l . 2>&1 | grep -v ^vendor/ | tee /dev/stderr)" || \
+	@test -z "$$(gofmt -s -l . 2>&1)" || \
 		(echo >&2 "+ please format Go code with 'gofmt -s', or use 'make fmt-save'" && false)
 
 fmt-save:
@@ -46,7 +41,7 @@ lint:
 	@echo "+ $@"
 	$(if $(shell which golint || echo ''), , \
 		$(error Please install golint: `make get-tools`))
-	@test -z "$$(golint ./... 2>&1 | grep -v ^vendor/ | grep -v mock/ | tee /dev/stderr)"
+	@test -z "$$(golint ./... 2>&1)"
 
 test:
 	@echo "+ $@"
