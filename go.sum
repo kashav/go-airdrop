@@ -1,0 +1,16 @@
+github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc h1:cAKDfWh5VpdgMhJosfJnn5/FoN2SRZ4p7fJNX58YPaU=
+github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
+github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf h1:qet1QNfXsQxTZqLG4oE62mJzwPIB8+Tee4RNCL9ulrY=
+github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
+github.com/cenkalti/backoff v1.0.1-0.20170329104900-5d150e7eec02 h1:dN1qQaHWwYfBT+d1+FqS9/jQV+BUdcgDMt3WzRjBE+A=
+github.com/cenkalti/backoff v1.0.1-0.20170329104900-5d150e7eec02/go.mod h1:90ReRw6GdpyfrHakVjL/QHaoyV4aDUVVkXQJJJ3NXXM=
+github.com/dustinkirkland/golang-petname v0.0.0-20170427230849-1f4996aa8aa0 h1:/vbswN1/mLKlCzDmZ5c5R2ekTR2Sg0kksDjaw5DjHro=
+github.com/dustinkirkland/golang-petname v0.0.0-20170427230849-1f4996aa8aa0/go.mod h1:V+Qd57rJe8gd4eiGzZyg4h54VLHmYVVw54iMnlAMrF8=
+github.com/grandcat/zeroconf v0.0.0-20170510061443-e4a16e81aad4 h1:fBnIwllhujUduycE0eAeynpIdhS4EcYWlsw/ypzRITQ=
+github.com/grandcat/zeroconf v0.0.0-20170510061443-e4a16e81aad4/go.mod h1:YjKB0WsLXlMkO9p+wGTCoPIDGRJH0mz7E526PxkQVxI=
+github.com/miekg/dns v0.0.0-20170604123008-e78414ef7560 h1:puF68QYl1/TNKGiSvYIpRJ0UotPzthEPgdCdJEEtp1o=
+github.com/miekg/dns v0.0.0-20170604123008-e78414ef7560/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
+golang.org/x/net v0.0.0-20170610001149-1a68b1313cf4 h1:ie586HeTAq0YSmrDnDy1x+7FuSFErSEo0+fISgvTVxM=
+golang.org/x/net v0.0.0-20170610001149-1a68b1313cf4/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+gopkg.in/alecthomas/kingpin.v2 v2.2.4 h1:CC8tJ/xljioKrK6ii3IeWVXU4Tw7VB+LbjZBJaBxN50=
+gopkg.in/alecthomas/kingpin.v2 v2.2.4/go.mod h1:FMv+mEhP44yOT+4EoQTLFTRgOQ1FBLkstjWtayDeSgw=
