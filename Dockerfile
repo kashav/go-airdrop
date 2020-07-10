@@ -1,14 +1,9 @@
-FROM iron/go:dev
+FROM golang:1.14
 
 WORKDIR /app
 
-ENV SRC_DIR=/go/src/github.com/kshvmdn/rdrp
+ADD . /app
 
-ADD . $SRC_DIR
-
-RUN cd $SRC_DIR && \
-    go get -u -v ./... && \
-    go build -o rdrp -v ./cmd/rdrp && \
-    cp rdrp /app/
+RUN go build -o rdrp -v ./cmd/rdrp
 
 ENTRYPOINT ["./rdrp"]
