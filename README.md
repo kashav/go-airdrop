@@ -1,4 +1,4 @@
-## rdrp [![Build Status](https://travis-ci.org/kshvmdn/rdrp.svg?branch=master)](https://travis-ci.org/kshvmdn/rdrp) [![Go Report Card](https://goreportcard.com/badge/github.com/kshvmdn/rdrp)](https://goreportcard.com/report/github.com/kshvmdn/rdrp)
+## rdrp [![Build Status](https://travis-ci.org/kashav/rdrp.svg?branch=master)](https://travis-ci.org/kashav/rdrp) [![Go Report Card](https://goreportcard.com/badge/github.com/kashav/rdrp)](https://goreportcard.com/report/github.com/kashav/rdrp)
 
 > A cross-platform command line tool for sending and receiving files over your local network, inspired by [AirDrop](https://support.apple.com/en-ca/HT204144).
 
@@ -37,7 +37,7 @@ Go should be [installed](https://golang.org/doc/install) and [configured](https:
 Install with Go:
 
   ```sh
-  $ go get -v github.com/kshvmdn/rdrp/...
+  $ go get -v github.com/kashav/rdrp/...
   $ which rdrp
   $GOPATH/bin/rdrp
   ```
@@ -45,8 +45,8 @@ Install with Go:
 Or, install directly via source:
 
   ```sh
-  $ git clone https://github.com/kshvmdn/rdrp.git $GOPATH/src/github.com/kshvmdn/rdrp
-  $ cd $_ # $GOPATH/src/github.com/kshvmdn/rdrp
+  $ git clone https://github.com/kashav/rdrp.git $GOPATH/src/github.com/kashav/rdrp
+  $ cd $_ # $GOPATH/src/github.com/kashav/rdrp
   $ make install all
   $ ./rdrp
   ```
@@ -182,25 +182,25 @@ You can view all connected clients with `list`. Use `--type` to specify the type
 Start off by cloning the repository (if you've already cloned, navigate to the project root):
 
   ```sh
-  $ git clone https://github.com/kshvmdn/rdrp
+  $ git clone https://github.com/kashav/rdrp
   $ cd rdrp
   ```
 
 Build the Docker image:
 
   ```sh
-  $ docker build -t kshvmdn/rdrp .
+  $ docker build -t kashav/rdrp .
   ```
 
 And run it! The `--rm` flag automatically removes the container when the program exits.
 
   ```sh
-  $ docker run --rm kshvmdn/rdrp [broadcast|list|send] ...
+  $ docker run --rm kashav/rdrp [broadcast|list|send] ...
   ```
 
 ### Contribute
 
-This project is completely open source, feel free to [open an issue](https://github.com/kshvmdn/rdrp/issues) or [submit a pull request](https://github.com/kshvmdn/rdrp/pulls).
+This project is completely open source, feel free to [open an issue](https://github.com/kashav/rdrp/issues) or [submit a pull request](https://github.com/kashav/rdrp/pulls).
 
 Before submitting a PR, please ensure that _tests are passing_ and that the linter is happy. The following commands may be of use.
 
