@@ -109,7 +109,7 @@ func (s *Sender) write(conn io.ReadWriter) error {
 	}
 
 	seen[response[0]] = true
-	if response[1] != "Y" {
+	if !isYes(response[1]) {
 		return nil
 	}
 

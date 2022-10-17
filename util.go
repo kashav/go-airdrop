@@ -3,6 +3,7 @@ package rdrp
 import (
 	"math/rand"
 	"net"
+	"strings"
 	"time"
 
 	petname "github.com/dustinkirkland/golang-petname"
@@ -39,4 +40,10 @@ func padRight(str, pad string, n int) string {
 			return str[0:n]
 		}
 	}
+}
+
+// isYes returns the parsed answer to a (Y/n) prompt.
+func isYes(response string) bool {
+	response = strings.TrimSpace(response)
+	return response == "" || response == "Y" || response == "y";
 }

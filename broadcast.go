@@ -86,7 +86,7 @@ func (b *Broadcaster) read(conn io.ReadWriter) (ok bool, err error) {
 	}
 
 	// Must come after writing the payload!
-	if response != "Y" {
+	if !isYes(response) {
 		return false, nil
 	}
 
